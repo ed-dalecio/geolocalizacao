@@ -26,80 +26,68 @@
     }
   </style>
 </head>
-<body>
+  <body>
 
-  <h1>Localização em Tempo Real</h1>
+    <h1>Localização em Tempo Real</h1>
 
-  <div class="box">
-    <div><span class="label">Data:</span> <span id="date">-</span></div>
-    <div><span class="label">Hora:</span> <span id="time">-</span></div>
-  </div>
+    <div class="box">
+      <div><span class="label">Data:</span> <span id="date">-</span></div>
+      <div><span class="label">Hora:</span> <span id="time">-</span></div>
+    </div>
 
-  <div id="coords" class="box">
-    <b>Latitude:</b> <span id="lat">-</span><br>
-    <b>Longitude:</b> <span id="lon">-</span><br>
-    <b>Precisão:</b> <span id="acc">-</span> metros<br>
-  </div>
+    <div id="coords" class="box">
+      <b>Latitude:</b> <span id="lat">-</span><br>
+      <b>Longitude:</b> <span id="lon">-</span><br>
+      <br><hr><br>
+      <b>Precisão:</b> <span id="acc">-</span> metros<br>
+    </div>
 
-  <div class="box">
-    <div><span class="label">Última atualização GPS:</span></div>
-    <div><span id="gpsTime">-</span></div>
-  </div>
+    <script>
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("date").textContent = now.toLocaleDateString("pt-BR");
+        document.getElementById("time").textContent =
+        now.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
 
-  <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("date").textContent = now.toLocaleDateString("pt-BR");
-       document.getElementById("time").textContent =
-      now.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
+      setInterval(updateClock, 60000);
+      updateClock();
 
-    setInterval(updateClock, 60000);
-    updateClock();
-
-    if (!navigator.geolocation) {
-      alert("Geolocalização não é suportada neste navegador.");
-    } else {
-      navigator.geolocation.watchPosition(
-        function(position) {
-          document.getElementById("lat").textContent = position.coords.latitude.toFixed(6);
-          document.getElementById("lon").textContent = position.coords.longitude.toFixed(6);
-          document.getElementById("acc").textContent = position.coords.accuracy.toFixed(1);
-        
-          const gpsNow = new Date(position.timestamp);
-          document.getElementById("gpsTime").textContent =
-            gpsNow.toLocaleDateString("pt-BR") + " " + gpsNow.toLocaleTimeString("pt-BR", {
-              hour: "2-digit",
-              minute: "2-digit"
-            });
-        },
-        function(error) {
-          let msg = "Erro ao obter localização.";
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              msg = "Permissão de localização negada.";
-              break;
-            case error.POSITION_UNAVAILABLE:
-              msg = "Localização indisponível.";
-              break;
-            case error.TIMEOUT:
-              msg = "Tempo esgotado ao obter localização.";
-              break;
+      if (!navigator.geolocation) {
+        alert("Geolocalização não é suportada neste navegador.");
+      } else {
+        navigator.geolocation.watchPosition(
+          function(position) {
+            document.getElementById("lat").textContent = position.coords.latitude.toFixed(6);
+            document.getElementById("lon").textContent = position.coords.longitude.toFixed(6);
+            document.getElementById("acc").textContent = position.coords.accuracy.toFixed(1); 
+          },
+          function(error) {
+            let msg = "Erro ao obter localização.";
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                msg = "Permissão de localização negada.";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                msg = "Localização indisponível.";
+                break;
+              case error.TIMEOUT:
+                msg = "Tempo esgotado ao obter localização.";
+                break;
+            }
+            alert(msg);
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 1000,   // aceita cache de até 1s
+            timeout: 10000
           }
-          alert(msg);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 1000,   // aceita cache de até 1s
-          timeout: 10000
-        }
-      );
-    }
-  </script>
+        );
+      }
+    </script>
 
-</body>
+  </body>
 </html>
-
