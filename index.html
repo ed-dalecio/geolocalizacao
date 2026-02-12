@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Coordenadas em Tempo Real</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #coords {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    .small {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Localização em Tempo Real</h2>
+
+  <div id="coords">
+    Latitude: <span id="lat">-</span><br>
+    Longitude: <span id="lon">-</span><br>
+    Precisão: <span id="acc">-</span> metros<br>
+    <span class="small">Atualizando automaticamente...</span>
+  </div>
+
+  <script>
+    if (!navigator.geolocation) {
+      alert("Geolocalização não é suportada neste navegador.");
+    } else {
+      navigator.geolocation.watchPosition(
+        function(position) {
+          document.getElementById("lat").textContent = position.coords.latitude.toFixed(6);
+          document.getElementById("lon").textContent = position.coords.longitude.toFixed(6);
+          document.getElementById("acc").textContent = position.coords.accuracy.toFixed(1);
+        },
+        function(error) {
+          let msg = "Erro ao obter localização.";
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              msg = "Permissão de localização negada.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              msg = "Localização indisponível.";
+              break;
+            case error.TIMEOUT:
+              msg = "Tempo esgotado ao obter localização.";
+              break;
+          }
+          alert(msg);
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 1000,   // aceita cache de até 1s
+          timeout: 10000
+        }
+      );
+    }
+  </script>
+
+</body>
+</html>
