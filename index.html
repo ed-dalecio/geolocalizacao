@@ -24,6 +24,37 @@
     .label {
       font-weight: bold;
     }
+
+    .btn-copy {
+      margin-top: 12px;
+      padding: 10px 18px;
+      font-size: 32pt;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(135deg, #2d89ff, #1b5fcc);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-copy:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.98);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .copy-status {
+      margin-top: 6px;
+      font-size: 32px;
+      color: #2d89ff;
+      font-weight: 500;
+    }
   </style>
 </head>
   <body>
@@ -40,9 +71,36 @@
       <b>Longitude:</b> <span id="lon">-</span><br>
       <br><hr><br>
       <b>Precisão:</b> <span id="acc">-</span> metros<br>
+      <br><hr><br>
+      <button onclick="copiarCoordenadas()" class="btn-copy">Copiar</button>
+      <div id="copyStatus" class="copy-status"></div>
     </div>
 
     <script>
+      function copiarCoordenadas() {
+        const lat = document.getElementById("lat").textContent;
+        const lon = document.getElementById("lon").textContent;
+
+        if (lat === "-" || lon === "-") {
+          document.getElementById("copyStatus").textContent =
+            "Coordenadas ainda não disponíveis.";
+          return;
+        }
+
+        const texto = lat + ", " + lon;
+
+        navigator.clipboard.writeText(texto)
+          .then(() => {
+            document.getElementById("copyStatus").textContent =
+              "Coordenadas copiadas! ✅";
+          })
+          .catch(err => {
+            document.getElementById("copyStatus").textContent =
+              "Erro ao copiar.";
+            console.error("Erro ao copiar:", err);
+          });
+      }
+
       function updateClock() {
         const now = new Date();
         document.getElementById("date").textContent = now.toLocaleDateString("pt-BR");
